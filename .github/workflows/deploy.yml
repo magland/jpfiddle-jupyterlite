@@ -23,6 +23,7 @@ jobs:
           python -m pip install -r requirements.txt
       - name: Install the jpfiddle-extension
         run: |
+          pip install hatchling==0.5.0
           cd jpfiddle-extension
           pip install -ve .
           jupyter labextension develop --overwrite .
