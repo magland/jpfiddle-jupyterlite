@@ -24,7 +24,6 @@ jobs:
       - name: Install the jpfiddle-extension
         run: |
           cd jpfiddle-extension
-          jlpm install
           pip install -ve .
           jupyter labextension develop --overwrite .
           jlpm add @jupyterlab/apputils
