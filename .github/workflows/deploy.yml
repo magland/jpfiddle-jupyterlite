@@ -21,9 +21,11 @@ jobs:
       - name: Install the dependencies
         run: |
           python -m pip install -r requirements.txt
+      - name: Show version of node
+        run: |
+          node --version
       - name: Install the jpfiddle-extension
         run: |
-          pip install hatchling==1.5.0
           cd jpfiddle-extension
           pip install -ve .
           jupyter labextension develop --overwrite .
