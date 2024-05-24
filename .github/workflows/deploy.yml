@@ -21,6 +21,14 @@ jobs:
       - name: Install the dependencies
         run: |
           python -m pip install -r requirements.txt
+      - name: Install the jpfiddle-extension
+        run: |
+          cd jpfiddle-extension
+          pip install -ve .
+          jupyter labextension develop --overwrite .
+          jlpm add @jupyterlab/apputils
+          jlpm add @jupyterlab/application
+          jlpm run build
       - name: Build the JupyterLite site
         run: |
           jupyter lite build --output-dir dist
