@@ -13,6 +13,11 @@ const plugin: JupyterFrontEndPlugin<void> = {
   requires: [],
   activate: (app: JupyterFrontEnd) => {
     console.log('JupyterLab extension jpfiddle-extension is activated!');
+    if (!window.parent) {
+      console.error('No parent window found for jpfiddle-extension');
+      return;
+    }
+    window.parent.postMessage({ type: 'jpfiddle-extension-ready' }, '*');
 
     /* Incoming messages management */
     window.addEventListener('message', event => {
@@ -25,7 +30,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
             change.newValue.path,
             change.newValue.content
           );
-          window.parent?.postMessage(
+          window.parent.postMessage(
             {
               type: 'file-saved',
               path: change.newValue.path,
@@ -35,7 +40,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
           );
         } else if (change.type === 'delete' && change.oldValue) {
           console.log('File deleted:', change.oldValue.path);
-          window.parent?.postMessage(
+          window.parent.postMessage(
             {
               type: 'file-deleted',
               path: change.oldValue.path
@@ -52,7 +57,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
             change.oldValue.path,
             change.newValue.path
           );
-          window.parent?.postMessage(
+          window.parent.postMessage(
             {
               type: 'file-renamed',
               oldPath: change.oldValue.path,
@@ -62,7 +67,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
           );
         } else if (change.type === 'new' && change.newValue) {
           console.log('New file created:', change.newValue.path);
-          window.parent?.postMessage(
+          window.parent.postMessage(
             {
               type: 'file-created',
               path: change.newValue.path
@@ -83,15 +88,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
             content: file.content
           });
         }
-      } else if (msg.type === 'get-files') {
-        const xx = app.serviceManager.contents.get('.');
-        console.log('Files:', xx);
-        window.postMessage(
-          {
-            type: 'files'
-          },
-          '*'
-        );
       }
     });
   }
