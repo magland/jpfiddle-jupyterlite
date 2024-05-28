@@ -88,9 +88,11 @@ const plugin: JupyterFrontEndPlugin<void> = {
           if (file.path.split('/').length > 1) {
             await ensureDirectoryExists(app, file.path.split('/').slice(0, -1).join('/'));
           }
+          console.log('saving file', file.path);
           await app.serviceManager.contents.save(file.path, {
             type: 'file',
             format: 'text',
+            name: file.path.split('/').pop(),
             content: file.content
           });
         }
@@ -103,10 +105,11 @@ async function ensureDirectoryExists(app: JupyterFrontEnd, path: string) {
   const parts = path.split('/');
   let currentPath = '';
   for (const part of parts) {
-    currentPath = currentPath + '/' + part;
+    currentPath = currentPath ? currentPath + '/' + part : part;
     try {
       await app.serviceManager.contents.get(currentPath);
     } catch (error) {
+      console.log('Creating directory:', currentPath);
       await app.serviceManager.contents.save(currentPath, {
         type: 'directory',
         name: part
