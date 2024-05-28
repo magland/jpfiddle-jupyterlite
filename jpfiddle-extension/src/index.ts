@@ -20,7 +20,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
     window.parent.postMessage({ type: 'jpfiddle-extension-ready' }, '*');
 
     /* Incoming messages management */
-    window.addEventListener('message', event => {
+    window.addEventListener('message', async event => {
       const msg = event.data;
       console.log('Message received in the iframe ***D:', msg);
       app.serviceManager.contents.fileChanged.connect((sender, change) => {
@@ -86,9 +86,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
         for (const file of files) {
           console.log('Creating a new file:', file);
           if (file.path.split('/').length > 1) {
-            ensureDirectoryExists(app, file.path.split('/').slice(0, -1).join('/'));
+            await ensureDirectoryExists(app, file.path.split('/').slice(0, -1).join('/'));
           }
-          app.serviceManager.contents.save(file.path, {
+          await app.serviceManager.contents.save(file.path, {
             type: 'file',
             format: 'text',
             content: file.content
