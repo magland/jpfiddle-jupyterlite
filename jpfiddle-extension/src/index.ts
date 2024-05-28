@@ -108,7 +108,8 @@ async function ensureDirectoryExists(app: JupyterFrontEnd, path: string) {
       await app.serviceManager.contents.get(currentPath);
     } catch (error) {
       await app.serviceManager.contents.save(currentPath, {
-        type: 'directory'
+        type: 'directory',
+        name: part
       })
     }
   }
