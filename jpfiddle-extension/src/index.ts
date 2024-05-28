@@ -25,6 +25,10 @@ const plugin: JupyterFrontEndPlugin<void> = {
       console.log('Message received in the iframe ***D:', msg);
       app.serviceManager.contents.fileChanged.connect((sender, change) => {
         if (change.type === 'save' && change.newValue) {
+          // ignore if it's a directory
+          if (change.newValue.type === 'directory') {
+            return;
+          }
           console.log(
             'File saved:',
             change.newValue.path
@@ -103,7 +107,9 @@ async function ensureDirectoryExists(app: JupyterFrontEnd, path: string) {
     try {
       await app.serviceManager.contents.get(currentPath);
     } catch (error) {
-      await app.serviceManager.contents.newUntitled({ path: currentPath, type: 'directory' });
+      await app.serviceManager.contents.save(currentPath, {
+        type: 'directory'
+      })
     }
   }
 }
