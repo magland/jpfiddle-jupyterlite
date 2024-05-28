@@ -27,8 +27,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         if (change.type === 'save' && change.newValue) {
           console.log(
             'File saved:',
-            change.newValue.path,
-            change.newValue.content
+            change.newValue.path
           );
           window.parent.postMessage(
             {
@@ -82,6 +81,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
         const files = event.data.files;
         for (const file of files) {
           console.log('Creating a new file:', file);
+          if (file.path.split('/').length > 1) {
+            ensureDirectoryExists(app, file.path.split('/').slice(0, -1).join('/'));
+          }
           app.serviceManager.contents.save(file.path, {
             type: 'file',
             format: 'text',
@@ -92,5 +94,18 @@ const plugin: JupyterFrontEndPlugin<void> = {
     });
   }
 };
+
+async function ensureDirectoryExists(app: JupyterFrontEnd, path: string) {
+  const parts = path.split('/');
+  let currentPath = '';
+  for (const part of parts) {
+    currentPath = currentPath + '/' + part;
+    try {
+      await app.serviceManager.contents.get(currentPath);
+    } catch (error) {
+      await app.serviceManager.contents.newUntitled({ path: currentPath, type: 'directory' });
+    }
+  }
+}
 
 export default plugin;
