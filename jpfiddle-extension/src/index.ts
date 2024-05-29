@@ -231,7 +231,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
             await app.serviceManager.contents.save(path, {
               type: 'file',
               format: 'text',
-              name: file.path,
+              name: path,
               content: file.content
             });
           } else {
