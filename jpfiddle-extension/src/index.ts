@@ -65,7 +65,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         window.parent.postMessage(
           {
             type: 'file-deleted',
-            path: change.oldValue.path
+            path
           },
           '*'
         );
@@ -202,6 +202,17 @@ const plugin: JupyterFrontEndPlugin<void> = {
       if (msg.type === 'set-fiddle-id') {
         fiddleId = msg.fiddleId;
         if (!fiddleId) return;
+
+        // create the fiddle directory if it doesn't exist
+        try {
+          await app.serviceManager.contents.get(fiddleId);
+        } catch (error) {
+          console.log('Creating directory:', fiddleId);
+          await app.serviceManager.contents.save(fiddleId, {
+            type: 'directory',
+            name: fiddleId
+          })
+        }
 
         changeToFiddleDirectory();
       }
