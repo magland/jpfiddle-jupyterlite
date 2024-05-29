@@ -217,7 +217,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
           console.log('Creating directory:', fiddleId);
           await app.serviceManager.contents.save(fiddleId, {
             type: 'directory',
-            name: fiddleId
+            name: baseName(fiddleId)
           })
         }
         const files = event.data.files;
@@ -231,7 +231,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
             await app.serviceManager.contents.save(path, {
               type: 'file',
               format: 'text',
-              name: path,
+              name: baseName(path),
               content: file.content
             });
           } else {
@@ -272,7 +272,7 @@ async function ensureDirectoryExists(app: JupyterFrontEnd, path: string) {
       console.log('Creating directory:', currentPath);
       await app.serviceManager.contents.save(currentPath, {
         type: 'directory',
-        name: currentPath
+        name: baseName(currentPath)
       })
     }
   }
@@ -307,6 +307,10 @@ const isTextFilePath = (path: string) => {
     '.cmd',
   ]
   return extensions.some(ext => path.endsWith(ext));
+}
+
+const baseName = (path: string) => {
+  return path.split('/').pop() || '';
 }
 
 export default plugin;
