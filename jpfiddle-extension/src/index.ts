@@ -203,6 +203,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
         fiddleId = msg.fiddleId;
         if (!fiddleId) return;
 
+        changeToFiddleDirectory();
+      }
+      else if (msg.type === 'set-files') {
+        if (!fiddleId) {
+          console.error('No fiddleId found in set-files event');
+          return;
+        }
         // create the fiddle directory if it doesn't exist
         try {
           await app.serviceManager.contents.get(fiddleId);
@@ -212,14 +219,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
             type: 'directory',
             name: fiddleId
           })
-        }
-
-        changeToFiddleDirectory();
-      }
-      else if (msg.type === 'set-files') {
-        if (!fiddleId) {
-          console.error('No fiddleId found in set-files event');
-          return;
         }
         const files = event.data.files;
         for (const file of files) {
