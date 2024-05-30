@@ -31,7 +31,7 @@ jobs:
           node --version
       - name: Install the jpfiddle-extension
         run: |
-          pip install jpfiddle-extension==0.1.6
+          pip install jpfiddle-extension==0.1.7
       - name: Build the JupyterLite site
         run: |
           jupyter lite build --output-dir dist
