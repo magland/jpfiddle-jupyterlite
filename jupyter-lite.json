@@ -10,6 +10,7 @@
         ],
         "contentsStorageDrivers": [
             "memoryStorageDriver"
-        ]
+        ],
+        "notebookStartsKernel": false
     }
 }
